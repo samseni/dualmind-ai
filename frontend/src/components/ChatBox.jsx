@@ -107,6 +107,18 @@ const ChatBox = ({ theme, toggleTheme }) => {
     setIsLoading(true);
 
     try {
+      // Format conversation history for backend (remove timestamps and assistant responses)
+      const formattedHistory = messages
+        .filter(msg => msg.role === 'user' || (msg.role === 'assistant' && msg.claudeResponse))
+        .map(msg => {
+          if (msg.role === 'user') {
+            return { role: 'user', content: msg.content };
+          } else {
+            // Use Claude's response as the assistant reply
+            return { role: 'assistant', content: msg.claudeResponse };
+          }
+        });
+
       // Send message to backend (will call both APIs)
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -115,7 +127,7 @@ const ChatBox = ({ theme, toggleTheme }) => {
         },
         body: JSON.stringify({
           message: userQuestion,
-          conversationHistory: messages,
+          conversationHistory: formattedHistory,
         }),
       });
 
