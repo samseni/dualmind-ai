@@ -22,6 +22,12 @@ DualMind is a portfolio-worthy project that demonstrates professional AI integra
 
 ---
 
+## 📚 Documentation
+
+- **[Frontend Documentation](FRONTEND_DOCUMENTATION.md)** - Detailed explanation of every frontend file and how they work together
+
+---
+
 ## What This Project Is
 
 DualMind is a chat application similar to ChatGPT or Claude's official website, with one key difference: **users can choose which AI model answers their questions.** The interface provides a seamless experience where you can switch between Claude (Anthropic) and ChatGPT (OpenAI) without leaving the conversation.
