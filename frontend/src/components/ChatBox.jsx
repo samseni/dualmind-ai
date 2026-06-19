@@ -221,13 +221,33 @@ const ChatBox = ({ theme, toggleTheme }) => {
           {messages.length === 0 ? (
             <div className="welcome-message">
               <h2>Welcome to DualMind! 👋</h2>
-              <p>Select an AI model and start chatting.</p>
-              <ul>
-                <li>💬 Your conversation history is automatically saved</li>
-                <li>🔀 Switch models anytime</li>
-                <li>⚡ Responses appear in real-time</li>
-                <li>📝 Access past chats from the sidebar</li>
-              </ul>
+              <p>Chat with powerful AI models. Click a prompt below or type your own question.</p>
+
+              <div className="prompt-cards">
+                <div className="prompt-card" onClick={() => setInputValue("Explain quantum computing in simple terms")}>
+                  <span className="prompt-card-icon">🔬</span>
+                  <div className="prompt-card-title">Explain a concept</div>
+                  <div className="prompt-card-text">Quantum computing in simple terms</div>
+                </div>
+
+                <div className="prompt-card" onClick={() => setInputValue("Write a Python function to check if a number is prime")}>
+                  <span className="prompt-card-icon">💻</span>
+                  <div className="prompt-card-title">Write code</div>
+                  <div className="prompt-card-text">Python function to check prime numbers</div>
+                </div>
+
+                <div className="prompt-card" onClick={() => setInputValue("Help me brainstorm ideas for a mobile app")}>
+                  <span className="prompt-card-icon">💡</span>
+                  <div className="prompt-card-title">Brainstorm ideas</div>
+                  <div className="prompt-card-text">Mobile app concepts and features</div>
+                </div>
+
+                <div className="prompt-card" onClick={() => setInputValue("Suggest a healthy meal plan for the week")}>
+                  <span className="prompt-card-icon">🥗</span>
+                  <div className="prompt-card-title">Get suggestions</div>
+                  <div className="prompt-card-text">Healthy weekly meal plan</div>
+                </div>
+              </div>
             </div>
           ) : (
             messages.map((msg, index) => (
