@@ -44,12 +44,33 @@ This is intentionally scoped to be completable while teaching the fundamental sk
 
 ## Features
 
-- 💬 **Chat interface** — Clean message list with user and AI messages
-- 🔀 **Model selector** — Switch between Claude and ChatGPT via dropdown
-- 🧵 **Conversation memory** — AI remembers previous messages in the chat
-- ⚡ **Streaming responses** — Text appears word-by-word in real-time
-- 🔒 **Secure API handling** — Keys protected on backend, never exposed to frontend
-- 🗂️ **Saved conversations** *(optional)* — Sidebar of past chats like ChatGPT
+### 🎨 Modern UI & UX
+- 🌓 **Dark/Light Mode** — Toggle between themes with preference saved to browser
+- 💅 **Professional Design** — Modern, clean interface with smooth animations
+- 📱 **Fully Responsive** — Works perfectly on desktop, tablet, and mobile
+- ⚡ **Smooth Animations** — Messages slide in, buttons have hover effects, seamless transitions
+
+### 💬 Chat Features
+- 🤖 **Dual AI Models** — Switch between Claude and ChatGPT in one conversation
+- 🔀 **Model Selector** — Easy dropdown to choose your AI assistant
+- 🧵 **Conversation Memory** — AI remembers previous messages in the chat
+- 👤 **Message Avatars** — Visual distinction between user and AI messages
+- 🕐 **Timestamps** — See when each message was sent
+- 📋 **Copy Messages** — One-click copy for AI responses
+- ⚡ **Streaming Responses** — Text appears word-by-word in real-time *(coming with backend)*
+
+### 🗂️ Chat History & Management
+- 📚 **Sidebar Navigation** — Collapsible sidebar showing all your conversations
+- 💾 **Auto-Save** — Conversations automatically saved to browser localStorage
+- ✨ **New Chat** — Start fresh conversations with one click
+- 🔄 **Load Previous Chats** — Click any saved chat to continue where you left off
+- 🗑️ **Delete Chats** — Remove unwanted conversations
+- 📅 **Smart Dates** — "Today", "Yesterday", or specific dates for chat history
+- 📊 **Message Count** — See how many messages in each conversation
+
+### 🔒 Security
+- 🔐 **Secure API Handling** — Keys protected on backend, never exposed to frontend
+- 🏠 **Local Storage** — All chats saved locally in your browser (privacy-first)
 
 ---
 
@@ -146,11 +167,14 @@ dualmind-ai/
 │   ├── node_modules/         # Dependencies (ignored by git)
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── ChatBox.jsx       # Message list + input field
+│   │   │   ├── ChatBox.jsx       # Main chat interface + state management
+│   │   │   ├── ChatHistory.jsx   # Sidebar with saved conversations
 │   │   │   ├── Message.jsx       # Single message bubble component
 │   │   │   └── ModelSelector.jsx # Claude/ChatGPT dropdown
-│   │   ├── App.jsx           # Main app component
+│   │   ├── App.jsx           # Main app component + theme management
+│   │   ├── App.css           # All styles (dark/light themes, sidebar, etc.)
 │   │   └── main.jsx          # React entry point
+│   ├── index.html            # HTML entry point
 │   ├── .gitignore            # Ignore node_modules, dist, etc.
 │   ├── package.json          # Frontend dependencies
 │   └── vite.config.js        # Vite bundler configuration

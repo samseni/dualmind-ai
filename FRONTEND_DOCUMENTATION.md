@@ -14,10 +14,11 @@ frontend/
 ├── vite.config.js                    # Vite bundler configuration
 └── src/
     ├── main.jsx                      # React application entry point
-    ├── App.jsx                       # Root React component
-    ├── App.css                       # Global styles
+    ├── App.jsx                       # Root React component + theme management
+    ├── App.css                       # Global styles (dark/light themes, sidebar)
     └── components/
-        ├── ChatBox.jsx               # Main chat interface
+        ├── ChatBox.jsx               # Main chat interface + state management
+        ├── ChatHistory.jsx           # Sidebar with saved conversations
         ├── Message.jsx               # Single message component
         └── ModelSelector.jsx         # AI model dropdown selector
 ```
@@ -225,24 +226,39 @@ index.html loads → main.jsx runs → App.jsx renders → Full UI appears
 
 **Location:** `frontend/src/App.jsx`
 
-**Purpose:** Root component of the React application
+**Purpose:** Root component of the React application + Theme management
 
 **What it does:**
 - Wraps the entire application
-- Imports the main `ChatBox` component
+- Manages dark/light theme state
+- Saves theme preference to localStorage
+- Passes theme controls to ChatBox component
 - Imports global styles from `App.css`
-- Provides the top-level structure
 
 **Code breakdown:**
 ```javascript
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ChatBox from './components/ChatBox';
 import './App.css';
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme || 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div className="App">
-      <ChatBox />
+      <ChatBox theme={theme} toggleTheme={toggleTheme} />
     </div>
   );
 }
@@ -250,14 +266,20 @@ function App() {
 export default App;
 ```
 
+**State management:**
+- `theme` - Current theme ('dark' or 'light')
+- Loads saved preference from localStorage on mount
+- Applies theme via `data-theme` attribute on document root
+- Saves changes back to localStorage
+
 **What it renders:**
 - A `<div className="App">` wrapper
-- The `<ChatBox />` component inside (the entire chat interface)
+- The `<ChatBox />` component with theme props
 
 **Why it exists:**
-- Provides a central place to add app-wide features later
-- Could add routing, authentication, or multiple pages in the future
-- Keeps the structure organized and modular
+- Centralizes theme management for entire app
+- Provides a place for app-wide features (routing, auth, etc.)
+- Keeps structure organized and modular
 
 ---
 
@@ -553,14 +575,111 @@ const ModelSelector = ({ selectedModel, onModelChange }) => {
 
 ---
 
+### 11. `ChatHistory.jsx`
+
+**Location:** `frontend/src/components/ChatHistory.jsx`
+
+**Purpose:** Sidebar component that displays and manages saved conversations
+
+**What it does:**
+- Shows a collapsible sidebar with list of all saved chats
+- Allows creating new chats, loading previous chats, and deleting chats
+- Displays chat metadata (title, date, message count)
+- Handles mobile responsiveness with overlay
+
+**Props:**
+```javascript
+<ChatHistory
+  conversations={[...]}          // Array of conversation objects
+  currentChatId="12345"          // ID of active conversation
+  onSelectChat={(id) => {...}}   // Function to load a chat
+  onNewChat={() => {...}}        // Function to start new chat
+  onDeleteChat={(id) => {...}}   // Function to delete a chat
+  isOpen={true}                  // Sidebar visibility (mobile)
+  onToggle={() => {...}}         // Function to toggle sidebar
+/>
+```
+
+**Conversation object structure:**
+```javascript
+{
+  id: "1234567890",              // Unique ID (timestamp)
+  title: "Chat about React",     // Optional custom title
+  messages: [...],               // Array of message objects
+  createdAt: "2024-01-15T10:30:00Z",  // ISO timestamp
+  lastUpdated: "2024-01-15T11:45:00Z" // ISO timestamp
+}
+```
+
+**Key functions:**
+
+**1. `formatDate()` - Formats timestamps:**
+```javascript
+const formatDate = (timestamp) => {
+  if (!timestamp) return 'Just now';
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+```
+
+**2. `getChatTitle()` - Generates title from first message:**
+```javascript
+const getChatTitle = (chat) => {
+  if (chat.title) return chat.title;
+  if (chat.messages && chat.messages.length > 0) {
+    const firstMessage = chat.messages[0].content;
+    return firstMessage.length > 30
+      ? firstMessage.substring(0, 30) + '...'
+      : firstMessage;
+  }
+  return 'New Chat';
+};
+```
+
+**What it renders:**
+1. **Sidebar overlay** (mobile only) - Dark overlay when sidebar is open
+2. **Sidebar header** - "Chat History" title + close button (mobile)
+3. **New Chat button** - Purple button to start fresh conversation
+4. **Conversations list** - Scrollable list of all saved chats
+5. **Empty state** - Message when no chats exist
+6. **Sidebar footer** - Info about local storage
+
+**Each conversation item shows:**
+- 💬 Chat icon
+- Title (first 30 chars of first message or custom title)
+- Date ("Today", "Yesterday", or specific date)
+- Message count
+- Delete button (🗑️) - appears on hover
+
+**Mobile behavior:**
+- Sidebar slides in from left when toggled
+- Dark overlay blocks main content
+- Close button (✕) appears in header
+- Tapping overlay closes sidebar
+
+**Desktop behavior:**
+- Sidebar always visible (280px wide)
+- No overlay
+- No close button
+
+---
+
 ## 🔄 How Components Work Together
 
 ### Component Hierarchy:
 ```
 main.jsx
-  └── App.jsx
-        └── ChatBox.jsx
-              ├── ModelSelector.jsx
+  └── App.jsx (manages theme)
+        └── ChatBox.jsx (manages chat state + history)
+              ├── ChatHistory.jsx (sidebar)
+              │     └── Conversation items
+              ├── ModelSelector.jsx (dropdown)
               └── Message.jsx (rendered multiple times)
 ```
 
@@ -689,22 +808,30 @@ npm run preview
 3. **`package.json`** - Lists dependencies and scripts
 4. **`vite.config.js`** - Configures build tool and proxy
 5. **`main.jsx`** - Renders React app into HTML
-6. **`App.jsx`** - Root React component
-7. **`App.css`** - Global styles and animations
-8. **`ChatBox.jsx`** - Main chat logic and API calls
-9. **`Message.jsx`** - Single message bubble display
+6. **`App.jsx`** - Root React component + theme management
+7. **`App.css`** - Global styles, dark/light themes, and sidebar CSS
+8. **`ChatBox.jsx`** - Main chat logic, API calls, and chat history management
+9. **`Message.jsx`** - Single message bubble with avatar and timestamp
 10. **`ModelSelector.jsx`** - AI model dropdown selector
+11. **`ChatHistory.jsx`** - Sidebar with saved conversations list
 
 **The flow in simple terms:**
 1. Browser loads `index.html`
 2. HTML loads `main.jsx` (via Vite)
 3. `main.jsx` renders `App.jsx`
-4. `App.jsx` renders `ChatBox.jsx`
-5. `ChatBox.jsx` renders `ModelSelector.jsx` and multiple `Message.jsx` components
+4. `App.jsx` manages theme and renders `ChatBox.jsx`
+5. `ChatBox.jsx` renders:
+   - `ChatHistory.jsx` (sidebar with saved chats)
+   - `ModelSelector.jsx` (AI model dropdown)
+   - Multiple `Message.jsx` components (the chat)
 6. User types and sends message
 7. `ChatBox.jsx` calls backend API
 8. Response displayed as new `Message.jsx`
+9. Conversation auto-saved to localStorage
+10. `ChatHistory.jsx` updates with latest chat
 
 ---
+
+**Frontend Status:** ✅ Complete with all features!
 
 **Next step:** Create the backend to handle `/api/chat` requests and call Claude/ChatGPT APIs.
