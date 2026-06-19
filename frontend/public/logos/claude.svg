@@ -1,0 +1,9 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Claude-style sunburst/asterisk logo -->
+  <circle cx="12" cy="12" r="10" fill="#CC9B7A" opacity="0.2"/>
+  <path d="M12 2L12 22M2 12L22 12M5.64 5.64L18.36 18.36M18.36 5.64L5.64 18.36"
+        stroke="#CC9B7A"
+        stroke-width="2"
+        stroke-linecap="round"/>
+  <circle cx="12" cy="12" r="3" fill="#CC9B7A"/>
+</svg>

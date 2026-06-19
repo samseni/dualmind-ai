@@ -12,6 +12,10 @@ frontend/
 ├── index.html                        # HTML entry point
 ├── package.json                      # Dependencies and scripts
 ├── vite.config.js                    # Vite bundler configuration
+├── public/
+│   └── logos/
+│       ├── claude.svg                # Claude brand logo (sunburst pattern)
+│       └── chatgpt.svg               # ChatGPT brand logo (hexagonal swirl)
 └── src/
     ├── main.jsx                      # React application entry point
     ├── App.jsx                       # Root React component + theme management
@@ -20,7 +24,7 @@ frontend/
         ├── ChatBox.jsx               # Main chat interface + state management
         ├── ChatHistory.jsx           # Sidebar with saved conversations
         ├── Message.jsx               # Single message component
-        └── ModelSelector.jsx         # AI model dropdown selector
+        └── ModelSelector.jsx         # AI model dropdown selector with logos
 ```
 
 ---
@@ -531,12 +535,13 @@ const Message = ({ role, content, model }) => {
 
 **Location:** `frontend/src/components/ModelSelector.jsx`
 
-**Purpose:** Dropdown to select which AI model to use
+**Purpose:** Dropdown to select which AI model to use, with brand logos
 
 **What it does:**
 - Shows a dropdown with options: Claude or ChatGPT
+- Displays brand logo next to dropdown that changes with selection
 - Calls parent component when user changes selection
-- Displays current selected model
+- Provides visual feedback for model selection
 
 **Props:**
 ```javascript
@@ -548,22 +553,63 @@ const Message = ({ role, content, model }) => {
 
 **Code breakdown:**
 ```javascript
+import React from 'react';
+
 const ModelSelector = ({ selectedModel, onModelChange }) => {
+  const getModelIcon = (model) => {
+    return model === 'claude'
+      ? '/logos/claude.svg'
+      : '/logos/chatgpt.svg';
+  };
+
+  const getModelName = (model) => {
+    return model === 'claude'
+      ? 'Claude (Anthropic)'
+      : 'ChatGPT (OpenAI)';
+  };
+
   return (
     <div className="model-selector">
       <label htmlFor="model-select">AI Model:</label>
-      <select
-        id="model-select"
-        value={selectedModel}
-        onChange={(e) => onModelChange(e.target.value)}
-      >
-        <option value="claude">Claude (Anthropic)</option>
-        <option value="chatgpt">ChatGPT (OpenAI)</option>
-      </select>
+      <div className="model-dropdown-wrapper">
+        <img
+          src={getModelIcon(selectedModel)}
+          alt={selectedModel}
+          className="model-icon-selected"
+        />
+        <select
+          id="model-select"
+          value={selectedModel}
+          onChange={(e) => onModelChange(e.target.value)}
+          className="model-dropdown"
+        >
+          <option value="claude">Claude (Anthropic)</option>
+          <option value="chatgpt">ChatGPT (OpenAI)</option>
+        </select>
+      </div>
     </div>
   );
 };
+
+export default ModelSelector;
 ```
+
+**Key features:**
+
+**1. Dynamic Logo Display:**
+- `getModelIcon()` function returns the correct SVG path based on selected model
+- Logo automatically changes when user selects different model
+- SVG logos are stored in `/public/logos/` folder
+
+**2. Helper Functions:**
+- `getModelIcon(model)` - Returns path to logo SVG file
+- `getModelName(model)` - Returns full name with company
+
+**3. Logo Integration:**
+- Logo appears to the left of dropdown
+- 24x24px size
+- Uses `currentColor` in SVG so it adapts to dark/light themes
+- Smooth transitions and hover effects (defined in CSS)
 
 **How it works:**
 1. User clicks dropdown
@@ -571,11 +617,130 @@ const ModelSelector = ({ selectedModel, onModelChange }) => {
 3. `onChange` event fires
 4. Calls `onModelChange('chatgpt')`
 5. Parent component (`ChatBox`) updates `selectedModel` state
-6. Next message will be sent to ChatGPT instead of Claude
+6. **Logo automatically changes** to ChatGPT hexagonal swirl
+7. Next message will be sent to ChatGPT instead of Claude
+
+**CSS Styling:**
+```css
+.model-dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.model-icon-selected {
+  width: 24px;
+  height: 24px;
+  color: var(--text-primary);  /* Adapts to theme */
+  transition: all 0.3s ease;
+}
+
+.model-dropdown:hover ~ .model-icon-selected {
+  transform: scale(1.1);  /* Logo scales up on hover */
+}
+```
 
 ---
 
-### 11. `ChatHistory.jsx`
+### 11. Logo Files (`claude.svg` & `chatgpt.svg`)
+
+**Location:** `frontend/public/logos/`
+
+**Purpose:** SVG brand logos for Claude and ChatGPT that adapt to dark/light themes
+
+**What they are:**
+- Vector graphic files (SVG format)
+- Brand-representative designs for each AI model
+- Theme-adaptive using `currentColor`
+
+**Files:**
+
+**1. `claude.svg` - Claude (Anthropic) Logo:**
+```svg
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Sunburst/asterisk pattern representing Claude's brand -->
+  <circle cx="12" cy="12" r="10" fill="#CC9B7A" opacity="0.2"/>
+  <path d="M12 2L12 22M2 12L22 12M5.64 5.64L18.36 18.36M18.36 5.64L5.64 18.36"
+        stroke="#CC9B7A"
+        stroke-width="2"/>
+  <circle cx="12" cy="12" r="3" fill="#CC9B7A"/>
+</svg>
+```
+- **Design:** Sunburst/asterisk pattern with radiating lines
+- **Colors:** Orange/tan (#CC9B7A) inspired by Anthropic's branding
+- **Pattern:** Cross and diagonal lines forming a star burst
+
+**2. `chatgpt.svg` - ChatGPT (OpenAI) Logo:**
+```svg
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Hexagonal swirl pattern -->
+  <g transform="translate(12, 12)" stroke="currentColor">
+    <!-- 6 curved arcs forming hexagon -->
+    <path d="M-3,-6 Q0,-8 3,-6"/>
+    <path d="M3,-6 Q6,-3 6,0"/>
+    <path d="M6,0 Q6,3 3,6"/>
+    <path d="M3,6 Q0,8 -3,6"/>
+    <path d="M-3,6 Q-6,3 -6,0"/>
+    <path d="M-6,0 Q-6,-3 -3,-6"/>
+    <!-- Inner connecting lines -->
+    <path d="M-2,-4 L2,-2"/>
+    <path d="M4,0 L2,3"/>
+    <path d="M0,5 L-2,3"/>
+    <path d="M-4,2 L-3,-1"/>
+    <path d="M-1,-3 L1,-1"/>
+    <path d="M2,1 L0,3"/>
+  </g>
+</svg>
+```
+- **Design:** Hexagonal swirl/knot pattern
+- **Colors:** Uses `currentColor` (adapts to theme automatically)
+- **Pattern:** 6 curved paths forming interlocking hexagon
+
+**Key features:**
+
+**1. Theme Adaptation:**
+```css
+.model-icon-selected {
+  color: var(--text-primary);  /* Changes with theme */
+}
+```
+- **Dark mode:** Logos appear white
+- **Light mode:** Logos appear black
+- SVG `currentColor` automatically inherits from CSS
+
+**2. Scalability:**
+- SVG format = scales perfectly at any size
+- No pixelation or quality loss
+- Small file size (< 1KB each)
+
+**3. Customization:**
+To use **official brand logos**:
+1. Download official SVG/PNG files
+2. Replace files in `/public/logos/` folder
+3. Keep same filenames (`claude.svg`, `chatgpt.svg`)
+4. No code changes needed!
+
+**How they're used:**
+```javascript
+// In ModelSelector.jsx
+const getModelIcon = (model) => {
+  return model === 'claude'
+    ? '/logos/claude.svg'    // Loads claude.svg
+    : '/logos/chatgpt.svg';  // Loads chatgpt.svg
+};
+
+<img src={getModelIcon(selectedModel)} alt={selectedModel} />
+```
+
+**Why in `/public/` folder:**
+- Vite serves files in `/public/` as static assets
+- Can be referenced directly: `/logos/claude.svg`
+- Not processed by bundler (loaded as-is)
+- Available at root level in production build
+
+---
+
+### 12. `ChatHistory.jsx`
 
 **Location:** `frontend/src/components/ChatHistory.jsx`
 
@@ -812,8 +977,9 @@ npm run preview
 7. **`App.css`** - Global styles, dark/light themes, and sidebar CSS
 8. **`ChatBox.jsx`** - Main chat logic, API calls, and chat history management
 9. **`Message.jsx`** - Single message bubble with avatar and timestamp
-10. **`ModelSelector.jsx`** - AI model dropdown selector
-11. **`ChatHistory.jsx`** - Sidebar with saved conversations list
+10. **`ModelSelector.jsx`** - AI model dropdown selector with brand logos
+11. **`claude.svg` & `chatgpt.svg`** - Theme-adaptive SVG logos for AI models
+12. **`ChatHistory.jsx`** - Sidebar with saved conversations list
 
 **The flow in simple terms:**
 1. Browser loads `index.html`

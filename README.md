@@ -52,7 +52,8 @@ This is intentionally scoped to be completable while teaching the fundamental sk
 
 ### 💬 Chat Features
 - 🤖 **Dual AI Models** — Switch between Claude and ChatGPT in one conversation
-- 🔀 **Model Selector** — Easy dropdown to choose your AI assistant
+- 🔀 **Model Selector** — Dropdown with brand logos to choose your AI assistant
+- 🎨 **Brand Logos** — SVG logos that adapt to dark/light themes automatically
 - 🧵 **Conversation Memory** — AI remembers previous messages in the chat
 - 👤 **Message Avatars** — Visual distinction between user and AI messages
 - 🕐 **Timestamps** — See when each message was sent
@@ -165,12 +166,16 @@ dualmind-ai/
 │
 ├── frontend/
 │   ├── node_modules/         # Dependencies (ignored by git)
+│   ├── public/
+│   │   └── logos/
+│   │       ├── claude.svg        # Claude brand logo (sunburst pattern)
+│   │       └── chatgpt.svg       # ChatGPT brand logo (hexagonal swirl)
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── ChatBox.jsx       # Main chat interface + state management
 │   │   │   ├── ChatHistory.jsx   # Sidebar with saved conversations
 │   │   │   ├── Message.jsx       # Single message bubble component
-│   │   │   └── ModelSelector.jsx # Claude/ChatGPT dropdown
+│   │   │   └── ModelSelector.jsx # Claude/ChatGPT dropdown with logos
 │   │   ├── App.jsx           # Main app component + theme management
 │   │   ├── App.css           # All styles (dark/light themes, sidebar, etc.)
 │   │   └── main.jsx          # React entry point
