@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Message from './Message';
-import ModelSelector from './ModelSelector';
+import DualMessage from './DualMessage';
 import ChatHistory from './ChatHistory';
 
 const ChatBox = ({ theme, toggleTheme }) => {
@@ -18,7 +17,6 @@ const ChatBox = ({ theme, toggleTheme }) => {
   // Current chat state
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [selectedModel, setSelectedModel] = useState('claude');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -71,6 +69,8 @@ const ChatBox = ({ theme, toggleTheme }) => {
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
 
+    const userQuestion = inputValue;
+
     // Create new chat if none exists
     if (!currentChatId) {
       const newChatId = Date.now().toString();
@@ -87,25 +87,34 @@ const ChatBox = ({ theme, toggleTheme }) => {
 
     const userMessage = {
       role: 'user',
-      content: inputValue,
+      content: userQuestion,
       timestamp: new Date().toISOString(),
     };
 
     // Add user message to chat
     setMessages(prev => [...prev, userMessage]);
+
+    // Add placeholder for dual AI response
+    const aiPlaceholder = {
+      role: 'assistant',
+      claudeResponse: null,
+      chatgptResponse: null,
+      timestamp: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, aiPlaceholder]);
+
     setInputValue('');
     setIsLoading(true);
 
     try {
-      // Send message to backend
+      // Send message to backend (will call both APIs)
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: inputValue,
-          model: selectedModel,
+          message: userQuestion,
           conversationHistory: messages,
         }),
       });
@@ -116,26 +125,29 @@ const ChatBox = ({ theme, toggleTheme }) => {
 
       const data = await response.json();
 
-      // Add AI response to chat
-      const aiMessage = {
-        role: 'assistant',
-        content: data.reply,
-        model: selectedModel === 'claude' ? 'Claude' : 'ChatGPT',
-        timestamp: new Date().toISOString(),
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
+      // Update the placeholder with actual responses
+      setMessages(prev => prev.map((msg, index) =>
+        index === prev.length - 1
+          ? {
+              ...msg,
+              claudeResponse: data.claudeReply || 'Error getting response',
+              chatgptResponse: data.chatgptReply || 'Error getting response',
+            }
+          : msg
+      ));
     } catch (error) {
       console.error('Error:', error);
 
-      // Add error message to chat
-      const errorMessage = {
-        role: 'assistant',
-        content: `Sorry, I encountered an error: ${error.message}. Please make sure the backend server is running.`,
-        model: 'System',
-      };
-
-      setMessages(prev => [...prev, errorMessage]);
+      // Update placeholder with error message
+      setMessages(prev => prev.map((msg, index) =>
+        index === prev.length - 1
+          ? {
+              ...msg,
+              claudeResponse: `Error: ${error.message}`,
+              chatgptResponse: `Error: ${error.message}`,
+            }
+          : msg
+      ));
     } finally {
       setIsLoading(false);
     }
@@ -208,10 +220,10 @@ const ChatBox = ({ theme, toggleTheme }) => {
         </div>
 
         <div className="chat-controls">
-          <ModelSelector
-            selectedModel={selectedModel}
-            onModelChange={setSelectedModel}
-          />
+          <div className="dual-mode-label">
+            <span className="dual-badge">🔥 Dual Mode</span>
+            <span className="dual-desc">Get responses from both Claude & ChatGPT</span>
+          </div>
           <button onClick={clearChat} className="clear-button">
             Clear Chat
           </button>
@@ -251,33 +263,15 @@ const ChatBox = ({ theme, toggleTheme }) => {
             </div>
           ) : (
             messages.map((msg, index) => (
-              <Message
+              <DualMessage
                 key={index}
                 role={msg.role}
                 content={msg.content}
-                model={msg.model}
+                claudeResponse={msg.claudeResponse}
+                chatgptResponse={msg.chatgptResponse}
                 timestamp={msg.timestamp}
               />
             ))
-          )}
-          {isLoading && (
-            <div className="message assistant loading">
-              <div className="message-avatar">🤖</div>
-              <div className="message-content-wrapper">
-                <div className="message-header">
-                  <span className="message-role">
-                    {selectedModel === 'claude' ? 'Claude' : 'ChatGPT'}
-                  </span>
-                </div>
-                <div className="message-bubble">
-                  <div className="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              </div>
-            </div>
           )}
           <div ref={messagesEndRef} />
         </div>

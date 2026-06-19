@@ -1,8 +1,8 @@
 # 🧠 DualMind AI
 
-> A full-stack AI chat application that lets you talk to **Claude** and **ChatGPT** in one unified interface — switch between AI models with a single click.
+> A full-stack AI chat application that lets you talk to **Claude** and **ChatGPT** **simultaneously** — get responses from both AI models side-by-side for every question.
 
-DualMind is a portfolio-worthy project that demonstrates professional AI integration skills: securely calling Large Language Models (LLMs) from your backend, handling streaming responses, and managing conversation context. This same architecture is used in production AI applications.
+DualMind is a portfolio-worthy project that demonstrates professional AI integration skills: securely calling multiple LLMs in parallel, handling dual responses, and providing an intuitive comparison interface. This same architecture is used in production AI applications.
 
 ---
 
@@ -30,7 +30,7 @@ DualMind is a portfolio-worthy project that demonstrates professional AI integra
 
 ## What This Project Is
 
-DualMind is a chat application similar to ChatGPT or Claude's official website, with one key difference: **users can choose which AI model answers their questions.** The interface provides a seamless experience where you can switch between Claude (Anthropic) and ChatGPT (OpenAI) without leaving the conversation.
+DualMind is a chat application similar to ChatGPT or Claude's official website, with one key difference: **users get responses from BOTH AI models for every question.** The interface provides a side-by-side comparison view where you can see how Claude (Anthropic) and ChatGPT (OpenAI) each respond to the same prompt.
 
 **Why this project matters:**
 - ✅ **Professional architecture** — API keys are secured on the backend (never exposed to clients)
@@ -51,14 +51,15 @@ This is intentionally scoped to be completable while teaching the fundamental sk
 - ⚡ **Smooth Animations** — Messages slide in, buttons have hover effects, seamless transitions
 
 ### 💬 Chat Features
-- 🤖 **Dual AI Models** — Switch between Claude and ChatGPT in one conversation
-- 🔀 **Model Selector** — Dropdown with brand logos to choose your AI assistant
-- 🎨 **Brand Logos** — SVG logos that adapt to dark/light themes automatically
+- 🔥 **Dual Mode** — Get responses from BOTH Claude and ChatGPT simultaneously
+- ⚖️ **Side-by-Side Comparison** — Compare responses from both AI models in real-time
+- 🎨 **Modern UI** — Clean, professional design inspired by Claude and ChatGPT interfaces
 - 🧵 **Conversation Memory** — AI remembers previous messages in the chat
-- 👤 **Message Avatars** — Visual distinction between user and AI messages
+- 👤 **Message Avatars** — Distinct avatars for Claude (C) and ChatGPT (G)
 - 🕐 **Timestamps** — See when each message was sent
-- 📋 **Copy Messages** — One-click copy for AI responses
-- ⚡ **Streaming Responses** — Text appears word-by-word in real-time *(coming with backend)*
+- 📋 **Copy Messages** — Individual copy buttons for each AI response
+- 📱 **Smart Layout** — Side-by-side on desktop, stacked on mobile
+- ⚡ **Parallel Requests** — Both AIs process your question at the same time
 
 ### 🗂️ Chat History & Management
 - 📚 **Sidebar Navigation** — Collapsible sidebar showing all your conversations
@@ -93,15 +94,15 @@ This is intentionally scoped to be completable while teaching the fundamental sk
 
 ```
 ┌─────────────────────┐
-│  React Frontend     │  User types message + selects model (Claude/ChatGPT)
+│  React Frontend     │  User types message
 │  (Browser)          │
 └──────────┬──────────┘
            │ HTTP POST /api/chat
-           │ { message, model, conversationHistory }
+           │ { message, conversationHistory }
            ▼
 ┌─────────────────────┐
 │  Express Backend    │  ← API keys stored here (environment variables)
-│  (Node.js Server)   │
+│  (Node.js Server)   │  ← Calls BOTH APIs in parallel
 └──────────┬──────────┘
            │
            ├─────────────────┬─────────────────┐
@@ -113,11 +114,11 @@ This is intentionally scoped to be completable while teaching the fundamental sk
            │                 │
            └────────┬────────┘
                     ▼
-            AI response streams back
+      { claudeReply: "...", chatgptReply: "..." }
                     │
                     ▼
            ┌─────────────────┐
-           │  Frontend UI    │  Displays response word-by-word
+           │  Frontend UI    │  Displays both responses side-by-side
            └─────────────────┘
 ```
 
@@ -174,8 +175,7 @@ dualmind-ai/
 │   │   ├── components/
 │   │   │   ├── ChatBox.jsx       # Main chat interface + state management
 │   │   │   ├── ChatHistory.jsx   # Sidebar with saved conversations
-│   │   │   ├── Message.jsx       # Single message bubble component
-│   │   │   └── ModelSelector.jsx # Claude/ChatGPT dropdown with logos
+│   │   │   └── DualMessage.jsx   # Side-by-side AI response component
 │   │   ├── App.jsx           # Main app component + theme management
 │   │   ├── App.css           # All styles (dark/light themes, sidebar, etc.)
 │   │   └── main.jsx          # React entry point
@@ -265,7 +265,6 @@ Content-Type: application/json
 
 {
   "message": "Hello, who are you?",
-  "model": "claude",
   "conversationHistory": []
 }
 ```
@@ -273,7 +272,8 @@ Content-Type: application/json
 **Expected response:**
 ```json
 {
-  "reply": "Hello! I'm Claude, an AI assistant created by Anthropic..."
+  "claudeReply": "Hello! I'm Claude, an AI assistant created by Anthropic...",
+  "chatgptReply": "Hello! I'm ChatGPT, an AI language model developed by OpenAI..."
 }
 ```
 
@@ -370,12 +370,13 @@ git push -u origin main
 Once the core app works, these make excellent portfolio additions:
 
 **Advanced Features:**
-- 🎨 **Dark mode** with theme switcher
+- 🎨 **Dark mode** with theme switcher ✅ *Implemented!*
+- 🔄 **Dual mode comparison** ✅ *Implemented!*
 - 📎 **File uploads** for multimodal chat (images, PDFs)
-- 🔄 **Compare mode** — ask both Claude and ChatGPT the same question side-by-side
 - 🏷️ **Auto-generated titles** for conversations using AI
 - 🔍 **Search** past conversations
 - 📊 **Usage dashboard** — track API costs and token usage
+- 🎚️ **Model selection toggle** — Let users choose single model vs dual mode
 
 **Technical Improvements:**
 - 👤 **User accounts** with authentication (JWT or OAuth)
