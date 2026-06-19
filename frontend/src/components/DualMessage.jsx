@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github-dark.css';
 
 const DualMessage = ({ role, content, claudeResponse, chatgptResponse, timestamp }) => {
   const [copiedClaude, setCopiedClaude] = useState(false);
@@ -40,7 +43,11 @@ const DualMessage = ({ role, content, claudeResponse, chatgptResponse, timestamp
               <span className="message-time">{formatTime(timestamp)}</span>
             )}
           </div>
-          <div className="message-bubble">{content}</div>
+          <div className="message-bubble">
+            <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+              {content}
+            </ReactMarkdown>
+          </div>
         </div>
       </div>
     );
@@ -49,18 +56,24 @@ const DualMessage = ({ role, content, claudeResponse, chatgptResponse, timestamp
   // Dual AI responses (side-by-side)
   return (
     <div className="dual-message-container">
-      {/* Claude Response */}
+      {/* Groq Response */}
       <div className="dual-message claude">
-        <div className="message-avatar claude-avatar">C</div>
+        <div className="message-avatar claude-avatar">G</div>
         <div className="message-content-wrapper">
           <div className="message-header">
-            <span className="message-role">Claude</span>
+            <span className="message-role">Groq</span>
             {timestamp && (
               <span className="message-time">{formatTime(timestamp)}</span>
             )}
           </div>
           <div className="message-bubble">
-            {claudeResponse || 'Thinking...'}
+            {claudeResponse ? (
+              <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                {claudeResponse}
+              </ReactMarkdown>
+            ) : (
+              'Thinking...'
+            )}
           </div>
           {claudeResponse && (
             <div className="message-actions">
@@ -76,18 +89,24 @@ const DualMessage = ({ role, content, claudeResponse, chatgptResponse, timestamp
         </div>
       </div>
 
-      {/* ChatGPT Response */}
+      {/* Llama 3.1 Response */}
       <div className="dual-message chatgpt">
-        <div className="message-avatar chatgpt-avatar">G</div>
+        <div className="message-avatar chatgpt-avatar">L</div>
         <div className="message-content-wrapper">
           <div className="message-header">
-            <span className="message-role">ChatGPT</span>
+            <span className="message-role">Llama 3.1</span>
             {timestamp && (
               <span className="message-time">{formatTime(timestamp)}</span>
             )}
           </div>
           <div className="message-bubble">
-            {chatgptResponse || 'Thinking...'}
+            {chatgptResponse ? (
+              <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                {chatgptResponse}
+              </ReactMarkdown>
+            ) : (
+              'Thinking...'
+            )}
           </div>
           {chatgptResponse && (
             <div className="message-actions">

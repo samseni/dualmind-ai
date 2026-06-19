@@ -220,7 +220,7 @@ const ChatBox = ({ theme, toggleTheme }) => {
             </button>
             <div>
               <h1>🧠 DualMind AI</h1>
-              <p className="subtitle">Chat with Claude & ChatGPT</p>
+              <p className="subtitle">Dual AI Models - Powered by Groq</p>
             </div>
           </div>
           <div className="chat-header-right">
@@ -234,7 +234,7 @@ const ChatBox = ({ theme, toggleTheme }) => {
         <div className="chat-controls">
           <div className="dual-mode-label">
             <span className="dual-badge">🔥 Dual Mode</span>
-            <span className="dual-desc">Get responses from both Claude & ChatGPT</span>
+            <span className="dual-desc">Llama 3.3 70B & Llama 3.1 8B side-by-side</span>
           </div>
           <button onClick={clearChat} className="clear-button">
             Clear Chat

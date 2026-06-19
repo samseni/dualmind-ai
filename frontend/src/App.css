@@ -1122,3 +1122,143 @@ body {
     font-size: 0.7rem;
   }
 }
+/* ============================================
+   MARKDOWN & CODE FORMATTING
+   ============================================ */
+
+/* Markdown Content Styles */
+.message-bubble {
+  line-height: 1.6;
+}
+
+.message-bubble h1,
+.message-bubble h2,
+.message-bubble h3,
+.message-bubble h4 {
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.message-bubble h1 { font-size: 1.5em; }
+.message-bubble h2 { font-size: 1.3em; }
+.message-bubble h3 { font-size: 1.1em; }
+
+.message-bubble p {
+  margin: 0.8em 0;
+}
+
+.message-bubble strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.message-bubble em {
+  font-style: italic;
+}
+
+/* Lists */
+.message-bubble ul,
+.message-bubble ol {
+  margin: 0.8em 0;
+  padding-left: 2em;
+}
+
+.message-bubble li {
+  margin: 0.4em 0;
+}
+
+/* Inline Code */
+.message-bubble code {
+  background: var(--bg-tertiary);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+  color: var(--accent-primary);
+}
+
+/* Code Blocks */
+.message-bubble pre {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 1em;
+  margin: 1em 0;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+}
+
+.message-bubble pre code {
+  background: transparent;
+  padding: 0;
+  color: #d4d4d4;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Syntax Highlighting Override for Light Theme */
+:root[data-theme="light"] .message-bubble pre {
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+}
+
+:root[data-theme="light"] .message-bubble pre code {
+  color: #24292f;
+}
+
+/* Blockquotes */
+.message-bubble blockquote {
+  border-left: 4px solid var(--accent-primary);
+  padding-left: 1em;
+  margin: 1em 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Tables */
+.message-bubble table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.message-bubble th,
+.message-bubble td {
+  border: 1px solid var(--border-color);
+  padding: 0.6em;
+  text-align: left;
+}
+
+.message-bubble th {
+  background: var(--bg-tertiary);
+  font-weight: 600;
+}
+
+/* Links */
+.message-bubble a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+
+.message-bubble a:hover {
+  color: var(--accent-hover);
+}
+
+/* Horizontal Rules */
+.message-bubble hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 1.5em 0;
+}
+
+/* Code Block Language Label */
+.message-bubble pre[class*="language-"]::before {
+  content: attr(class);
+  display: block;
+  text-align: right;
+  font-size: 0.75em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+}
